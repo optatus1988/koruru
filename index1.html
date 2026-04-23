@@ -1,0 +1,738 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Макроэкономический Анализ Роста KOSPI и ETF KORU</title>
+
+  <!-- Essential CDN Libraries -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            primary: {
+              50: 'hsl(30, 90%, 95%)',
+              100: 'hsl(30, 90%, 85%)',
+              200: 'hsl(30, 90%, 75%)',
+              300: 'hsl(30, 90%, 65%)',
+              400: 'hsl(30, 90%, 55%)',
+              500: 'hsl(30, 90%, 45%)',
+              600: 'hsl(30, 90%, 35%)',
+              700: 'hsl(30, 90%, 25%)',
+              800: 'hsl(30, 90%, 15%)',
+              900: 'hsl(30, 90%, 10%)'
+            },
+            accent: {
+              50: 'hsl(60, 85%, 95%)',
+              100: 'hsl(60, 85%, 85%)',
+              200: 'hsl(60, 85%, 75%)',
+              300: 'hsl(60, 85%, 65%)',
+              400: 'hsl(60, 85%, 60%)',
+              500: 'hsl(60, 85%, 55%)',
+              600: 'hsl(60, 85%, 50%)',
+              700: 'hsl(60, 85%, 40%)',
+              800: 'hsl(60, 85%, 30%)',
+              900: 'hsl(60, 85%, 20%)'
+            }
+          }
+        }
+      }
+    }
+  </script>
+  <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+  <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0"></script>
+
+  <!-- Preline UI Components -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/preline@2.0.3/dist/preline.min.css">
+  <script defer src="https://cdn.jsdelivr.net/npm/preline@2.0.3/dist/preline.js"></script>
+
+  <!-- Custom Styles -->
+  <style>
+    html { scroll-behavior: smooth; }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+      }
+      html { scroll-behavior: auto; }
+    }
+
+    .btn-interactive {
+      transition: all 0.2s ease-out;
+    }
+    
+    .btn-interactive:hover {
+      transform: scale(1.05);
+      box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+    }
+    
+    .btn-interactive:active {
+      transform: scale(0.95);
+    }
+
+    .card-interactive {
+      transition: all 0.3s ease-out;
+      border: 1px solid transparent;
+      --border-lightness: 40%;
+    }
+
+    .dark .card-interactive {
+      --border-lightness: 60%;
+    }
+
+    .card-interactive:hover {
+      box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+      filter: brightness(0.98);
+    }
+    
+    /* Primary colored cards */
+    .card-interactive[class*="primary"]:hover,
+    .card-interactive[class*="white"]:hover,
+    .card-interactive[class*="gray-"]:hover {
+      border-color: hsl(30, 90%, var(--border-lightness));
+    }
+    
+    /* Accent colored cards */
+    .card-interactive[class*="accent"]:hover {
+      border-color: hsl(60, 85%, var(--border-lightness));
+    }
+  </style>
+
+  <script>
+    function toggleDarkMode() {
+      document.body.classList.toggle('dark');
+      const isDark = document.body.classList.contains('dark');
+      document.getElementById('sunIcon').style.display = isDark ? 'block' : 'none';
+      document.getElementById('moonIcon').style.display = isDark ? 'none' : 'block';
+    }
+  </script>
+</head>
+
+<body class="bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-gray-100 transition-colors duration-300">
+  <!-- Citation System Script -->
+  <script>
+    function initCitationSystem() {
+      let i = 1, map = new Map();
+      document.querySelectorAll('[data-ref]').forEach(el => {
+        if (el.dataset.citationProcessed) return;
+        const raw = (el.getAttribute('data-ref')||'').trim();
+        if (!raw) return;
+
+        const parts = raw.split('|');
+        const url = parts[0].trim();
+        const idx = (parts[1]||'').trim() || map.get(raw) || (map.set(raw, String(i)), String(i++));
+
+        if (!el.textContent || !el.textContent.trim()) { el.dataset.citationProcessed = 'true'; return; }
+
+        const btn = document.createElement('sup'); btn.textContent = String(idx);
+        Object.assign(btn.style, { fontSize:'8px', color:'#fff', cursor:'pointer', top: '1px', fontWeight:'bold', backgroundColor:'#ea580c', borderRadius:'50%', transition:'all .15s', userSelect:'none', minWidth:'19px', height:'19px', marginLeft:'6px', display:'inline-flex', alignItems:'center', justifyContent:'center', boxShadow:'0 1px 3px rgba(0,0,0,.2)', lineHeight:'1'});
+        btn.addEventListener('mouseenter', ()=> Object.assign(btn.style, { backgroundColor:'#c2410c', transform:'scale(1.12)' }));
+        btn.addEventListener('mouseleave', ()=> Object.assign(btn.style, { backgroundColor:'#ea580c', transform:'scale(1)' }));
+        btn.addEventListener('click', e=>{ e.preventDefault(); e.stopPropagation(); window.open(url, '_blank'); });
+
+        el.appendChild(btn); el.dataset.citationProcessed = 'true';
+      });
+    }
+  </script>
+
+  <!-- Progress bar -->
+  <div class="fixed top-0 left-0 h-1 bg-primary-500 dark:bg-primary-400 z-[60] transition-all duration-300 ease-out" id="progressBar" style="width: 0%;"></div>
+
+  <!-- Floating Header -->
+  <header class="fixed top-0 left-0 right-0 z-50 backdrop-blur bg-gray-50/90 dark:bg-gray-900/90 border-b border-primary-500/20 dark:border-primary-600/20">
+    <div class="max-w-7xl mx-auto px-6 py-4">
+      <div class="flex items-center justify-between">
+        <h1 class="text-xl font-bold text-primary-700 dark:text-primary-300">Анализ KOSPI и KORU</h1>
+        
+        <nav class="hidden md:flex items-center space-x-6">
+          <a href="#home" class="text-sm font-medium hover:text-primary-600 dark:hover:text-primary-400 transition-colors">Главная</a>
+          <a href="#kospi" class="text-sm font-medium hover:text-primary-600 dark:hover:text-primary-400 transition-colors">KOSPI</a>
+          <a href="#export" class="text-sm font-medium hover:text-primary-600 dark:hover:text-primary-400 transition-colors">Экспорт</a>
+          <a href="#semiconductor" class="text-sm font-medium hover:text-primary-600 dark:hover:text-primary-400 transition-colors">Полупроводники</a>
+          <a href="#policy" class="text-sm font-medium hover:text-primary-600 dark:hover:text-primary-400 transition-colors">Политика</a>
+          <a href="#macro" class="text-sm font-medium hover:text-primary-600 dark:hover:text-primary-400 transition-colors">Макро</a>
+          <a href="#conclusion" class="text-sm font-medium hover:text-primary-600 dark:hover:text-primary-400 transition-colors">Заключение</a>
+        </nav>
+
+        <button onclick="toggleDarkMode()" class="btn-interactive p-2 rounded-lg bg-primary-100 dark:bg-primary-800 text-primary-600 dark:text-primary-300 hover:bg-primary-200 dark:hover:bg-primary-700 transition-all">
+          <i data-lucide="sun" id="sunIcon" class="w-5 h-5" style="display: none;"></i>
+          <i data-lucide="moon" id="moonIcon" class="w-5 h-5" style="display: block;"></i>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Content -->
+  <main class="min-h-screen">
+    <!-- Hero Section -->
+    <section id="home" class="py-40 bg-primary-50/50 dark:bg-gray-900" data-aos="fade-up">
+      <div class="max-w-5xl mx-auto px-6">
+        <div class="text-center space-y-6">
+          <h1 class="text-5xl font-bold text-primary-700 dark:text-primary-300" data-ref="https://www.investing.com/news/stock-market-news/south-koreas-kospi-market-outlook-for-2026-as-per-macquarie-4386420|1">
+            Макроэкономические Факторы Роста KOSPI и ETF KORU
+          </h1>
+          <p class="text-xl text-gray-700 dark:text-gray-300 max-w-3xl mx-auto">
+            Комплексный анализ макроэкономических драйверов, обусловивших впечатляющий рост южнокорейского фондового рынка и связанного с ним американского ETF KORU в течение прошедшего года
+          </p>
+          <div class="flex justify-center gap-4 pt-6">
+            <div class="card-interactive px-6 py-3 bg-white/90 backdrop-blur-sm dark:bg-gray-800 rounded-lg shadow-md">
+              <div class="text-2xl font-bold text-primary-600 dark:text-primary-400">70%</div>
+              <div class="text-xs text-gray-600 dark:text-gray-400">рост KOSPI за год</div>
+            </div>
+            <div class="card-interactive px-6 py-3 bg-white/90 backdrop-blur-sm dark:bg-gray-800 rounded-lg shadow-md">
+              <div class="text-2xl font-bold text-accent-600 dark:text-accent-400">$30B+</div>
+              <div class="text-xs text-gray-600 dark:text-gray-400">экспорт полупроводников</div>
+            </div>
+            <div class="card-interactive px-6 py-3 bg-white/90 backdrop-blur-sm dark:bg-gray-800 rounded-lg shadow-md">
+              <div class="text-2xl font-bold text-primary-600 dark:text-primary-400">64%</div>
+              <div class="text-xs text-gray-600 dark:text-gray-400">ожидаемый рост памяти</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- KOSPI Performance Section -->
+    <section id="kospi" class="py-20 bg-white/80 dark:bg-gray-900" data-aos="fade-up">
+      <div class="max-w-6xl mx-auto px-6">
+        <h2 class="text-3xl font-bold mb-8 text-primary-700 dark:text-primary-300 text-center">
+          Динамика Индекса KOSPI
+        </h2>
+        
+        <div class="grid md:grid-cols-2 gap-8 items-start mb-12">
+          <div class="space-y-6">
+            <p class="text-gray-700 dark:text-gray-300" data-ref="https://www.investing.com/news/stock-market-news/south-koreas-kospi-market-outlook-for-2026-as-per-macquarie-4386420|1">
+              Южнокорейский фондовый индекс KOSPI продемонстрировал впечатляющий рост, увеличившись на
+              <span class="mx-1 px-1.5 py-0.5 rounded-md bg-primary-100 dark:bg-primary-900/30 text-primary-800 dark:text-primary-300 font-semibold text-sm">70%</span>
+              с начала 2025 года. Этот рост значительно превзошел результаты других развивающихся рынков, подтверждая его лидерскую позицию среди аналогичных индикаторов.
+            </p>
+            
+            <p class="text-gray-700 dark:text-gray-300" data-ref="https://www.investing.com/news/stock-market-news/south-koreas-kospi-market-outlook-for-2026-as-per-macquarie-4386420|1">
+              Аналитики Macquarie прогнозируют, что к 2026 году индекс может достичь уровня
+              <span class="mx-1 px-1.5 py-0.5 rounded-md bg-primary-100 dark:bg-primary-900/30 text-primary-800 dark:text-primary-300 font-semibold text-sm">6,000 пунктов</span>,
+              при этом коэффициент цена/прибыль составит 14, что соответствует росту прибыли на акцию на 48% в 2026 году.
+            </p>
+          </div>
+          
+          <img
+            src="https://cdn.qwenlm.ai/b9dae233-8018-4115-a4c1-2a7ed18649fc/2e11d81d-0c81-473a-b74a-d0423bc3b271/466c34b7-2283-4926-a2cf-368591a16577.png?key=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyZXNvdXJjZV91c2VyX2lkIjoiYjlkYWUyMzMtODAxOC00MTE1LWE0YzEtMmE3ZWQxODY0OWZjIiwicmVzb3VyY2VfaWQiOiIyZTExZDgxZC0wYzgxLTQ3M2EtYjc0YS1kMDQyM2JjM2IyNzEiLCJyZXNvdXJjZV9jaGF0X2lkIjpudWxsfQ.qRHzin-QcQlJe_CFPaybQupnO8F8uU6KFWasZlEdm9E"
+            alt="Концептуальная иллюстрация южнокорейского фондового рынка: на переднем плане крупный цифровой дисплей с зелеными графиками роста, отображающими индекс KOSPI, расположенный на высоте 6,000 пунктов с подписью 70% роста за год. На заднем плане силуэт современного делового центра Сеула с яркими окнами небоскребов. Цветовая гамма включает насыщенные оранжевые и желтые тона (цвета основной и дополнительной палитры), символизирующие рост и оптимизм. Общий фон представляет собой смесь светло-серого и белого, создающий контраст с яркими элементами графиков. Композиция подчеркивает динамику и успех южнокорейской экономики через визуальное представление финансовых достижений."
+            class="w-full rounded-xl shadow-lg hover:shadow-2xl transition-shadow duration-300"
+          />
+        </div>
+
+        <div class="pl-4 pr-3 py-3 border-l-4 border-primary-500 bg-primary-50/40 dark:bg-primary-900/30 rounded-r-lg mb-8">
+          <p class="text-sm font-medium text-primary-900 dark:text-primary-100 leading-relaxed" data-ref="https://www.investing.com/news/stock-market-news/south-koreas-kospi-market-outlook-for-2026-as-per-macquarie-4386420|1">
+            <i data-lucide="trending-up" class="inline-block w-4 h-4 mr-1.5 -mt-0.5"></i>
+            Ключевой вывод: Рост KOSPI на 70% в 2025 году стал одним из самых впечатляющих среди развивающихся рынков, поддерживаемый сильными фундаментальными показателями компаний и благоприятной макроэкономической средой.
+          </p>
+        </div>
+
+        <div class="grid md:grid-cols-3 gap-6">
+          <div class="card-interactive p-6 bg-white/90 backdrop-blur-sm dark:bg-gray-800 rounded-xl shadow-md">
+            <div class="flex items-center space-x-4 mb-4">
+              <div class="flex-shrink-0 w-12 h-12 bg-primary-100 dark:bg-primary-900/30 rounded-lg flex items-center justify-center">
+                <i data-lucide="chart-line" class="w-6 h-6 text-primary-600 dark:text-primary-400"></i>
+              </div>
+              <h3 class="font-semibold text-lg text-primary-700 dark:text-primary-300">Прогнозируемый рост</h3>
+            </div>
+            <p class="text-gray-700 dark:text-gray-300 text-sm" data-ref="https://www.investing.com/news/stock-market-news/south-koreas-kospi-market-outlook-for-2026-as-per-macquarie-4386420|1">
+              Ожидается рост прибыли на акцию на 48% в 2026 году при коэффициенте цена/прибыль 14
+            </p>
+          </div>
+
+          <div class="card-interactive p-6 bg-white/90 backdrop-blur-sm dark:bg-gray-800 rounded-xl shadow-md">
+            <div class="flex items-center space-x-4 mb-4">
+              <div class="flex-shrink-0 w-12 h-12 bg-accent-100 dark:bg-accent-900/30 rounded-lg flex items-center justify-center">
+                <i data-lucide="dollar-sign" class="w-6 h-6 text-accent-600 dark:text-accent-400"></i>
+              </div>
+              <h3 class="font-semibold text-lg text-accent-700 dark:text-accent-300">Целевой уровень</h3>
+            </div>
+            <p class="text-gray-700 dark:text-gray-300 text-sm" data-ref="https://www.investing.com/news/stock-market-news/south-koreas-kospi-market-outlook-for-2026-as-per-macquarie-4386420|1">
+              Целевой уровень индекса KOSPI: 6,000 пунктов к концу 2026 года
+            </p>
+          </div>
+
+          <div class="card-interactive p-6 bg-white/90 backdrop-blur-sm dark:bg-gray-800 rounded-xl shadow-md">
+            <div class="flex items-center space-x-4 mb-4">
+              <div class="flex-shrink-0 w-12 h-12 bg-primary-100 dark:bg-primary-900/30 rounded-lg flex items-center justify-center">
+                <i data-lucide="trending-up" class="w-6 h-6 text-primary-600 dark:text-primary-400"></i>
+              </div>
+              <h3 class="font-semibold text-lg text-primary-700 dark:text-primary-300">Текущий рост</h3>
+            </div>
+            <p class="text-gray-700 dark:text-gray-300 text-sm" data-ref="https://www.investing.com/news/stock-market-news/south-koreas-kospi-market-outlook-for-2026-as-per-macquarie-4386420|1">
+              Реализованный рост индекса за год: 70% с начала 2025 года
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Export Performance Section -->
+    <section id="export" class="py-20 bg-accent-50/50 dark:bg-gray-800" data-aos="fade-up">
+      <div class="max-w-6xl mx-auto px-6">
+        <h2 class="text-3xl font-bold mb-8 text-accent-700 dark:text-accent-300 text-center">
+          Экспортные Достижения Южной Кореи
+        </h2>
+
+        <div class="grid md:grid-cols-2 gap-8 items-start mb-12">
+          <img
+            src="https://cdn.qwenlm.ai/b9dae233-8018-4115-a4c1-2a7ed18649fc/2e11d81d-0c81-473a-b74a-d0423bc3b271/ac1bb374-0f7c-443a-827b-85c8a5ab63fd.png?key=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyZXNvdXJjZV91c2VyX2lkIjoiYjlkYWUyMzMtODAxOC00MTE1LWE0YzEtMmE3ZWQxODY0OWZjIiwicmVzb3VyY2VfaWQiOiIyZTExZDgxZC0wYzgxLTQ3M2EtYjc0YS1kMDQyM2JjM2IyNzEiLCJyZXNvdXJjZV9jaGF0X2lkIjpudWxsfQ.qRHzin-QcQlJe_CFPaybQupnO8F8uU6KFWasZlEdm9E"
+            alt="Концептуальная иллюстрация южнокорейских экспортных достижений: на переднем плане три крупных контейнера с надписями на корейском и английском языках, символизирующие экспортные товары, включая полупроводники, автомобили и судостроение. На заднем плане современный порт Бусана с грузовыми судами, разгружающими контейнеры под ярким солнечным небом. В правом верхнем углу размещена круговая диаграмма с тремя сегментами: синий сегмент 22.2% для полупроводников, зеленый сегмент 24.9% для судостроения и красный сегмент 1.7% для автомобилей. В левом нижнем углу крупные цифры $709.69 млрд с подписью 'Общий объем экспорта 2025'. Цветовая палитра использует насыщенные оранжевые и желтые тона для фона и акцентов, с добавлением синих и зеленых элементов для выделения ключевых категорий. Композиция подчеркивает масштаб и разнообразие южнокорейского экспорта."
+            class="w-full rounded-xl shadow-lg hover:shadow-2xl transition-shadow duration-300"
+          />
+
+          <div class="space-y-6">
+            <p class="text-gray-700 dark:text-gray-300" data-ref="https://english.news.cn/20260102/b8b61a2d99284df996cae87aee15356e/c.html|3">
+              Южная Корея установила рекорд по объему экспорта в
+              <span class="mx-1 px-1.5 py-0.5 rounded-md bg-accent-100 dark:bg-accent-900/30 text-accent-800 dark:text-accent-300 font-semibold text-sm">$709.69 млрд</span>
+              в 2025 году, что на 3.8% превышает предыдущий годовой показатель. Ежедневный средний объем экспорта составил $2.64 млрд, демонстрируя устойчивую динамику роста.
+            </p>
+
+            <p class="text-gray-700 dark:text-gray-300" data-ref="https://english.news.cn/20260102/b8b61a2d99284df996cae87aee15356e/c.html|3">
+              Торговый профицит страны достиг
+              <span class="mx-1 px-1.5 py-0.5 rounded-md bg-accent-100 dark:bg-accent-900/30 text-accent-800 dark:text-accent-300 font-semibold text-sm">$78.02 млрд</span>
+              в 2025 году, рассчитанный из импорта в размере $631.67 млрд и экспорта $709.69 млрд, что указывает на здоровый торговый баланс и конкурентоспособность экономики.
+            </p>
+          </div>
+        </div>
+
+        <div class="pl-4 pr-3 py-3 border-l-4 border-accent-500 bg-accent-50/40 dark:bg-accent-900/30 rounded-r-lg mb-8">
+          <p class="text-sm font-medium text-accent-900 dark:text-accent-100 leading-relaxed" data-ref="https://english.news.cn/20260102/b8b61a2d99284df996cae87aee15356e/c.html|3">
+            <i data-lucide="circle-check" class="inline-block w-4 h-4 mr-1.5 -mt-0.5"></i>
+            Полупроводниковый сектор: Экспорт полупроводников вырос на 22.2% до рекордных $173.39 млрд, что стало основным драйвером общего роста экспорта благодаря высокому спросу на чипы памяти для центров обработки данных.
+          </p>
+        </div>
+
+        <div class="hs-accordion-group space-y-4">
+          <div class="hs-accordion card-interactive bg-white/80 backdrop-blur-sm dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700">
+            <button class="hs-accordion-toggle w-full flex justify-between items-center p-4 text-left hover:bg-accent-50 dark:hover:bg-gray-700/50 transition-colors rounded-xl" id="hs-export-1">
+              <div class="flex items-center space-x-4">
+                <div class="flex-shrink-0 w-12 h-12 bg-accent-100 dark:bg-accent-900/30 rounded-lg flex items-center justify-center">
+                  <i data-lucide="cpu" class="w-6 h-6 text-accent-600 dark:text-accent-400"></i>
+                </div>
+                <span class="font-semibold text-lg text-accent-700 dark:text-accent-300">Полупроводники</span>
+              </div>
+              <i data-lucide="chevron-down" class="hs-accordion-active:rotate-180 transition-transform duration-300 w-5 h-5 text-accent-600 dark:text-accent-400"></i>
+            </button>
+            <div id="hs-collapse-export-1" class="hs-accordion-content hidden w-full overflow-hidden transition-[height] duration-300" aria-labelledby="hs-export-1">
+              <div class="p-6 pt-0 space-y-4">
+                <p class="text-gray-700 dark:text-gray-300" data-ref="https://english.news.cn/20260102/b8b61a2d99284df996cae87aee15356e/c.html|3">
+                  Экспорт полупроводников достиг нового рекорда в
+                  <span class="mx-1 px-1.5 py-0.5 rounded-md bg-accent-100 dark:bg-accent-900/30 text-accent-800 dark:text-accent-300 font-semibold text-sm">$173.39 млрд</span>
+                  в 2025 году, увеличившись на 22.2% по сравнению с предыдущим годом. Этот рост был вызван сильным глобальным спросом на чипы памяти для центров обработки данных, связанных с искусственным интеллектом.
+                </p>
+                <p class="text-gray-700 dark:text-gray-300" data-ref="https://english.news.cn/20260102/b8b61a2d99284df996cae87aee15356e/c.html|3">
+                  В марте 2026 года экспорт полупроводников достиг беспрецедентного уровня более
+                  <span class="mx-1 px-1.5 py-0.5 rounded-md bg-accent-100 dark:bg-accent-900/30 text-accent-800 dark:text-accent-300 font-semibold text-sm">$30 млрд</span>,
+                  что свидетельствует о продолжении сильной динамики в секторе.
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <div class="hs-accordion card-interactive bg-white/80 backdrop-blur-sm dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700">
+            <button class="hs-accordion-toggle w-full flex justify-between items-center p-4 text-left hover:bg-accent-50 dark:hover:bg-gray-700/50 transition-colors rounded-xl" id="hs-export-2">
+              <div class="flex items-center space-x-4">
+                <div class="flex-shrink-0 w-12 h-12 bg-primary-100 dark:bg-primary-900/30 rounded-lg flex items-center justify-center">
+                  <i data-lucide="ship" class="w-6 h-6 text-primary-600 dark:text-primary-400"></i>
+                </div>
+                <span class="font-semibold text-lg text-primary-700 dark:text-primary-300">Судостроение</span>
+              </div>
+              <i data-lucide="chevron-down" class="hs-accordion-active:rotate-180 transition-transform duration-300 w-5 h-5 text-primary-600 dark:text-primary-400"></i>
+            </button>
+            <div id="hs-collapse-export-2" class="hs-accordion-content hidden w-full overflow-hidden transition-[height] duration-300" aria-labelledby="hs-export-2">
+              <div class="p-6 pt-0 space-y-4">
+                <p class="text-gray-700 dark:text-gray-300" data-ref="https://english.news.cn/20260102/b8b61a2d99284df996cae87aee15356e/c.html|3">
+                  Судостроение стало вторым крупнейшим экспортным сектором, достигнув
+                  <span class="mx-1 px-1.5 py-0.5 rounded-md bg-primary-100 dark:bg-primary-900/30 text-primary-800 dark:text-primary-300 font-semibold text-sm">$32.03 млрд</span>
+                  в 2025 году с ростом на 24.9%. Этот сектор показал одну из самых высоких темпов роста среди всех категорий экспорта.
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <div class="hs-accordion card-interactive bg-white/80 backdrop-blur-sm dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700">
+            <button class="hs-accordion-toggle w-full flex justify-between items-center p-4 text-left hover:bg-accent-50 dark:hover:bg-gray-700/50 transition-colors rounded-xl" id="hs-export-3">
+              <div class="flex items-center space-x-4">
+                <div class="flex-shrink-0 w-12 h-12 bg-accent-100 dark:bg-accent-900/30 rounded-lg flex items-center justify-center">
+                  <i data-lucide="car" class="w-6 h-6 text-accent-600 dark:text-accent-400"></i>
+                </div>
+                <span class="font-semibold text-lg text-accent-700 dark:text-accent-300">Автомобильная Промышленность</span>
+              </div>
+              <i data-lucide="chevron-down" class="hs-accordion-active:rotate-180 transition-transform duration-300 w-5 h-5 text-accent-600 dark:text-accent-400"></i>
+            </button>
+            <div id="hs-collapse-export-3" class="hs-accordion-content hidden w-full overflow-hidden transition-[height] duration-300" aria-labelledby="hs-export-3">
+              <div class="p-6 pt-0 space-y-4">
+                <p class="text-gray-700 dark:text-gray-300" data-ref="https://english.news.cn/20260102/b8b61a2d99284df996cae87aee15356e/c.html|3">
+                  Автомобильные поставки увеличились на
+                  <span class="mx-1 px-1.5 py-0.5 rounded-md bg-accent-100 dark:bg-accent-900/30 text-accent-800 dark:text-accent-300 font-semibold text-sm">1.7%</span>
+                  до $71.98 млрд в 2025 году. Несмотря на скромный рост, этот сектор остается важной частью экспортного портфеля страны.
+                </p>
+                <p class="text-gray-700 dark:text-gray-300" data-ref="https://english.news.cn/20260102/b8b61a2d99284df996cae87aee15356e/c.html|3">
+                  Компьютерный экспорт также показал положительную динамику, увеличившись на 4.5% до $13.75 млрд, что свидетельствует о растущем спросе на технологии.
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Semiconductor Boom Section -->
+    <section id="semiconductor" class="py-20 bg-white/80 dark:bg-gray-900" data-aos="fade-up">
+      <div class="max-w-6xl mx-auto px-6">
+        <h2 class="text-3xl font-bold mb-8 text-primary-700 dark:text-primary-300 text-center">
+          Суперцикл Памяти и Глобальный Спрос
+        </h2>
+
+        <div class="grid md:grid-cols-2 gap-8 items-start mb-12">
+          <div class="space-y-6">
+            <p class="text-gray-700 dark:text-gray-300" data-ref="https://www.linkedin.com/posts/adamlwalker_omdia-semiconductor-market-surpasses-830bn-activity-7440356759472369664-WTtv|2">
+              Глобальная полупроводниковая промышленность превысила
+              <span class="mx-1 px-1.5 py-0.5 rounded-md bg-primary-100 dark:bg-primary-900/30 text-primary-800 dark:text-primary-300 font-semibold text-sm">$830 млрд</span>
+              в выручке в 2025 году, отметив второй год подряд более чем 20% годового роста. Этот рост обусловлен ростом рабочих нагрузок ИИ, особенно спросом на DRAM и High Bandwidth Memory (HBM).
+            </p>
+
+            <p class="text-gray-700 dark:text-gray-300" data-ref="https://www.linkedin.com/posts/adamlwalker_omdia-semiconductor-market-surpasses-830bn-activity-7440356759472369664-WTtv|2">
+              Gartner прогнозирует, что мировая выручка от полупроводников превысит
+              <span class="mx-1 px-1.5 py-0.5 rounded-md bg-primary-100 dark:bg-primary-900/30 text-primary-800 dark:text-primary-300 font-semibold text-sm">$1.3 трлн</span>
+              в 2026 году, что представляет собой ожидаемый рост на 64% — самый сильный показатель за последние два десятилетия.
+            </p>
+          </div>
+
+          <div class="card-interactive p-6 rounded-xl shadow-md bg-gradient-to-br from-primary-50 to-accent-50 dark:from-primary-900/20 dark:to-accent-900/20">
+            <h3 class="text-xl font-semibold mb-4 text-primary-700 dark:text-primary-300">Феномен Memflation</h3>
+            <p class="text-gray-700 dark:text-gray-300 mb-4" data-ref="https://www.linkedin.com/posts/adamlwalker_omdia-semiconductor-market-surpasses-830bn-activity-7440356759472369664-WTtv|2">
+              Явление, известное как "memflation", происходит, когда избыточный спрос на инфраструктуру ИИ потребляет большую долю производства памяти. Аналитик Gartner Раджив Раджпут прогнозирует, что цены на DRAM вырастут на
+              <span class="mx-1 px-1.5 py-0.5 rounded-md bg-primary-100 dark:bg-primary-900/30 text-primary-800 dark:text-primary-300 font-semibold text-sm">125%</span>,
+              а цены на NAND флэш — на
+              <span class="mx-1 px-1.5 py-0.5 rounded-md bg-primary-100 dark:bg-primary-900/30 text-primary-800 dark:text-primary-300 font-semibold text-sm">234%</span>
+              в 2026 году.
+            </p>
+            <div class="pl-4 pr-3 py-3 border-l-4 border-amber-500 bg-amber-50/40 dark:bg-amber-900/30 rounded-r-lg">
+              <p class="text-sm font-medium text-amber-900 dark:text-amber-100 leading-relaxed" data-ref="https://www.linkedin.com/posts/adamlwalker_omdia-semiconductor-market-surpasses-830bn-activity-7440356759472369664-WTtv|2">
+                <i data-lucide="alert-triangle" class="inline-block w-4 h-4 mr-1.5 -mt-0.5"></i>
+                Предупреждение: Ожидается, что цены на память не снизятся значительно до конца 2027 года, что может подавить спрос на продукты, не связанные с ИИ, до тех пор, пока ценообразование не стабилизируется.
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <div class="pl-4 pr-3 py-3 border-l-4 border-primary-500 bg-primary-50/40 dark:bg-primary-900/30 rounded-r-lg mb-8">
+          <p class="text-sm font-medium text-primary-900 dark:text-primary-100 leading-relaxed" data-ref="https://www.linkedin.com/posts/adamlwalker_omdia-semiconductor-market-surpasses-830bn-activity-7440356759472369664-WTtv|2">
+            <i data-lucide="info" class="inline-block w-4 h-4 mr-1.5 -mt-0.5"></i>
+            Чипы ИИ: Чипы ИИ составят примерно 30% от общей выручки от полупроводников в 2026 году, благодаря продолжающимся инвестициям от гипермасштабных провайдеров. Это создает устойчивый спрос на южнокорейские полупроводниковые компании.
+          </p>
+        </div>
+
+        <div class="grid md:grid-cols-3 gap-6">
+          <div class="card-interactive p-6 bg-white/90 backdrop-blur-sm dark:bg-gray-800 rounded-xl shadow-md">
+            <div class="flex items-center space-x-4 mb-4">
+              <div class="flex-shrink-0 w-12 h-12 bg-primary-100 dark:bg-primary-900/30 rounded-lg flex items-center justify-center">
+                <i data-lucide="trending-up" class="w-6 h-6 text-primary-600 dark:text-primary-400"></i>
+              </div>
+              <h3 class="font-semibold text-lg text-primary-700 dark:text-primary-300">Рост DRAM</h3>
+            </div>
+            <p class="text-gray-700 dark:text-gray-300 text-sm" data-ref="https://www.linkedin.com/posts/magicjo8258_semiconductor-ai-memory-activity-7445539733667065856-Qzkx|4">
+              Цены на память DRAM выросли на 90-95% квартал к кварталу из-за сильного дисбаланса спроса и предложения
+            </p>
+          </div>
+
+          <div class="card-interactive p-6 bg-white/90 backdrop-blur-sm dark:bg-gray-800 rounded-xl shadow-md">
+            <div class="flex items-center space-x-4 mb-4">
+              <div class="flex-shrink-0 w-12 h-12 bg-accent-100 dark:bg-accent-900/30 rounded-lg flex items-center justify-center">
+                <i data-lucide="percent" class="w-6 h-6 text-accent-600 dark:text-accent-400"></i>
+              </div>
+              <h3 class="font-semibold text-lg text-accent-700 dark:text-accent-300">Цены Samsung</h3>
+            </div>
+            <p class="text-gray-700 dark:text-gray-300 text-sm" data-ref="https://www.linkedin.com/posts/magicjo8258_semiconductor-ai-memory-activity-7445539733667065856-Qzkx|4">
+              Samsung завершила повышение цен на 30% для своих продуктов DRAM во втором квартале 2026 года
+            </p>
+          </div>
+
+          <div class="card-interactive p-6 bg-white/90 backdrop-blur-sm dark:bg-gray-800 rounded-xl shadow-md">
+            <div class="flex items-center space-x-4 mb-4">
+              <div class="flex-shrink-0 w-12 h-12 bg-primary-100 dark:bg-primary-900/30 rounded-lg flex items-center justify-center">
+                <i data-lucide="globe" class="w-6 h-6 text-primary-600 dark:text-primary-400"></i>
+              </div>
+              <h3 class="font-semibold text-lg text-primary-700 dark:text-primary-300">Pax Silica</h3>
+            </div>
+            <p class="text-gray-700 dark:text-gray-300 text-sm" data-ref="https://www.linkedin.com/posts/magicjo8258_semiconductor-ai-memory-activity-7445539733667065856-Qzkx|4">
+              Геополитический союз США, Индии, Японии и Южной Кореи для обеспечения цепочек поставок полупроводников
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Monetary Policy Section -->
+    <section id="policy" class="py-20 bg-primary-50/50 dark:bg-gray-800" data-aos="fade-up">
+      <div class="max-w-6xl mx-auto px-6">
+        <h2 class="text-3xl font-bold mb-8 text-primary-700 dark:text-primary-300 text-center">
+          Монетарная Политика и Процентные Ставки
+        </h2>
+
+        <div class="grid md:grid-cols-2 gap-8 items-start mb-12">
+          <div class="space-y-6">
+            <p class="text-gray-700 dark:text-gray-300" data-ref="https://www.statista.com/statistics/1235224/south-korea-central-bank-base-rate/?srsltid=AfmBOopo5svr1prXzmfH25KBl1WHcqM94mukbZDkal7D4dfqHKpRJUjt|9">
+              Между сентябрем 2024 года и мартом 2026 года центральный банк Южной Кореи реализовал
+              <span class="mx-1 px-1.5 py-0.5 rounded-md bg-primary-100 dark:bg-primary-900/30 text-primary-800 dark:text-primary-300 font-semibold text-sm">четыре</span>
+              снижения процентных ставок, с окончательным снижением, которое понизило процентную ставку до определенного уровня. Эти меры направлены на поддержание экономического роста и стимулирование внутреннего спроса.
+            </p>
+
+            <p class="text-gray-700 dark:text-gray-300" data-ref="https://www.investing.com/economic-calendar/south-korean-interest-rate-decision-473|10">
+              Процентная ставка оставалась стабильной на уровне
+              <span class="mx-1 px-1.5 py-0.5 rounded-md bg-primary-100 dark:bg-primary-900/30 text-primary-800 dark:text-primary-300 font-semibold text-sm">2.50%</span>
+              в январе, ноябре и октябре 2025 года, что указывает на осторожный подход центрального банка к денежно-кредитной политике в условиях экономической неопределенности.
+            </p>
+          </div>
+
+          <div class="card-interactive p-6 rounded-xl shadow-md bg-white/90 backdrop-blur-sm dark:bg-gray-900">
+            <h3 class="text-xl font-semibold mb-4 text-primary-700 dark:text-primary-300">Курс Валюты</h3>
+            <p class="text-gray-700 dark:text-gray-300 mb-4" data-ref="https://www.linkedin.com/posts/daretoimprove-finance_asia-market-brief-activity-7437409180384329728-i6xF|6">
+              Курс доллара США к южнокорейской воне консолидировался около уровня
+              <span class="mx-1 px-1.5 py-0.5 rounded-md bg-primary-100 dark:bg-primary-900/30 text-primary-800 dark:text-primary-300 font-semibold text-sm">1,510</span>,
+              важное развитие после резкого отскока от 17-летнего максимума. Стабильность валютного курса поддерживает конкурентоспособность экспорта.
+            </p>
+            <div class="pl-4 pr-3 py-3 border-l-4 border-primary-500 bg-primary-50/40 dark:bg-primary-900/30 rounded-r-lg">
+              <p class="text-sm font-medium text-primary-900 dark:text-primary-100 leading-relaxed" data-ref="https://www.linkedin.com/posts/daretoimprove-finance_asia-market-brief-activity-7437409180384329728-i6xF|6">
+                <i data-lucide="info" class="inline-block w-4 h-4 mr-1.5 -mt-0.5"></i>
+                Валютная стабильность: Консолидация курса USD/KRW около 1,510 уровня способствует стабильности экспорта и снижает валютные риски для компаний.
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <div class="pl-4 pr-3 py-3 border-l-4 border-amber-500 bg-amber-50/40 dark:bg-amber-900/30 rounded-r-lg mb-8">
+          <p class="text-sm font-medium text-amber-900 dark:text-amber-100 leading-relaxed" data-ref="https://www.statista.com/statistics/1235224/south-korea-central-bank-base-rate/?srsltid=AfmBOopo5svr1prXzmfH25KBl1WHcqM94mukbZDkal7D4dfqHKpRJUjt|9">
+            <i data-lucide="alert-triangle" class="inline-block w-4 h-4 mr-1.5 -mt-0.5"></i>
+            Важное замечание: Уровень процентной ставки после четырех снижений не указан в источнике, что требует дополнительного анализа для полного понимания текущей монетарной политики.
+          </p>
+        </div>
+
+        <div class="grid md:grid-cols-2 gap-6">
+          <div class="card-interactive p-6 bg-white/90 backdrop-blur-sm dark:bg-gray-800 rounded-xl shadow-md">
+            <h3 class="text-lg font-semibold mb-4 text-primary-700 dark:text-primary-300">Стабильность Ставок</h3>
+            <p class="text-gray-700 dark:text-gray-300 text-sm" data-ref="https://www.investing.com/economic-calendar/south-korean-interest-rate-decision-473|10">
+              Стабильная процентная ставка 2.50% в 2025 году указывает на осторожный подход к денежно-кредитной политике
+            </p>
+          </div>
+
+          <div class="card-interactive p-6 bg-white/90 backdrop-blur-sm dark:bg-gray-800 rounded-xl shadow-md">
+            <h3 class="text-lg font-semibold mb-4 text-accent-700 dark:text-accent-300">Валютная Политика</h3>
+            <p class="text-gray-700 dark:text-gray-300 text-sm" data-ref="https://www.linkedin.com/posts/daretoimprove-finance_asia-market-brief-activity-7437409180384329728-i6xF|6">
+              Консолидация курса USD/KRW около 1,510 уровня поддерживает конкурентоспособность экспорта
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Macroeconomic Outlook Section -->
+    <section id="macro" class="py-20 bg-white/80 dark:bg-gray-900" data-aos="fade-up">
+      <div class="max-w-6xl mx-auto px-6">
+        <h2 class="text-3xl font-bold mb-8 text-primary-700 dark:text-primary-300 text-center">
+          Макроэкономический Прогноз и Перспективы
+        </h2>
+
+        <div class="grid md:grid-cols-2 gap-8 items-start mb-12">
+          <div class="space-y-6">
+            <p class="text-gray-700 dark:text-gray-300" data-ref="https://privatebank.jpmorgan.com/apac/en/insights/markets-and-investing/asf/2026-asia-outlook|7">
+              JP Morgan Private Bank ожидает реальный рост ВВП в размере
+              <span class="mx-1 px-1.5 py-0.5 rounded-md bg-primary-100 dark:bg-primary-900/30 text-primary-800 dark:text-primary-300 font-semibold text-sm">4.3%</span>
+              (диапазон: 4.1–4.6%) в 2026 году, замедляясь по сравнению с 2025 годом из-за высокой базы для роста экспорта. Политики ожидают поддержки экономического роста.
+            </p>
+
+            <p class="text-gray-700 dark:text-gray-300" data-ref="https://www.imf.org/-/media/files/publications/cr/2025/english/1korea2025003-source-pdf.pdf|8">
+              Отрицательный разрыв выпуска прогнозируется постепенно закрываться начиная с 2026 года по мере усиления внутреннего спроса и восстановления экспорта при смягчении глобальной торговой политики. Это указывает на улучшение общего состояния экономики.
+            </p>
+          </div>
+
+          <div class="card-interactive p-6 rounded-xl shadow-md bg-gradient-to-br from-accent-50 to-primary-50 dark:from-accent-900/20 dark:to-primary-900/20">
+            <h3 class="text-xl font-semibold mb-4 text-accent-700 dark:text-accent-300">Экспортные Тренды</h3>
+            <p class="text-gray-700 dark:text-gray-300 mb-4" data-ref="https://english.news.cn/20260102/b8b61a2d99284df996cae87aee15356e/c.html|3">
+              Экспорт в ключевые рынки показал разнообразные тенденции в 2025 году: поставки в США снизились на
+              <span class="mx-1 px-1.5 py-0.5 rounded-md bg-accent-100 dark:bg-accent-900/30 text-accent-800 dark:text-accent-300 font-semibold text-sm">3.8%</span>
+              до $122.87 млрд, экспорт в ASEAN вырос на 7.4% до $122.49 млрд, а экспорт в Европейский Союз увеличился на 3.0% до $70.14 млрд.
+            </p>
+            <div class="pl-4 pr-3 py-3 border-l-4 border-primary-500 bg-primary-50/40 dark:bg-primary-900/30 rounded-r-lg">
+              <p class="text-sm font-medium text-primary-900 dark:text-primary-100 leading-relaxed" data-ref="https://english.news.cn/20260102/b8b61a2d99284df996cae87aee15356e/c.html|3">
+                <i data-lucide="circle-check" class="inline-block w-4 h-4 mr-1.5 -mt-0.5"></i>
+                Географическое расширение: Рост экспорта в ASEAN и ЕС компенсирует снижение в США, демонстрируя диверсификацию торговых партнеров Южной Кореи.
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <div class="hs-accordion-group space-y-4">
+          <div class="hs-accordion card-interactive bg-white/80 backdrop-blur-sm dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700">
+            <button class="hs-accordion-toggle w-full flex justify-between items-center p-4 text-left hover:bg-primary-50 dark:hover:bg-gray-700/50 transition-colors rounded-xl" id="hs-macro-1">
+              <div class="flex items-center space-x-4">
+                <div class="flex-shrink-0 w-12 h-12 bg-primary-100 dark:bg-primary-900/30 rounded-lg flex items-center justify-center">
+                  <i data-lucide="activity" class="w-6 h-6 text-primary-600 dark:text-primary-400"></i>
+                </div>
+                <span class="font-semibold text-lg text-primary-700 dark:text-primary-300">Глобальные Тренды</span>
+              </div>
+              <i data-lucide="chevron-down" class="hs-accordion-active:rotate-180 transition-transform duration-300 w-5 h-5 text-primary-600 dark:text-primary-400"></i>
+            </button>
+            <div id="hs-collapse-macro-1" class="hs-accordion-content hidden w-full overflow-hidden transition-[height] duration-300" aria-labelledby="hs-macro-1">
+              <div class="p-6 pt-0 space-y-4">
+                <p class="text-gray-700 dark:text-gray-300" data-ref="https://www.linkedin.com/posts/magicjo8258_semiconductor-ai-memory-activity-7445539733667065856-Qzkx|4">
+                  Глобальные продажи полупроводников выросли на 61.8% год к году в феврале 2026 года, достигнув $88.8 млрд, что ставит индустрию на путь превышения годового рубежа в $1 трлн в 2026 году. TSMC сообщила о 35% росте выручки до $35.6 млрд в первом квартале, с чистой прибылью, выросшей на 58% до $18 млрд.
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <div class="hs-accordion card-interactive bg-white/80 backdrop-blur-sm dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700">
+            <button class="hs-accordion-toggle w-full flex justify-between items-center p-4 text-left hover:bg-primary-50 dark:hover:bg-gray-700/50 transition-colors rounded-xl" id="hs-macro-2">
+              <div class="flex items-center space-x-4">
+                <div class="flex-shrink-0 w-12 h-12 bg-accent-100 dark:bg-accent-900/30 rounded-lg flex items-center justify-center">
+                  <i data-lucide="trending-up" class="w-6 h-6 text-accent-600 dark:text-accent-400"></i>
+                </div>
+                <span class="font-semibold text-lg text-accent-700 dark:text-accent-300">Инвестиционный Климат</span>
+              </div>
+              <i data-lucide="chevron-down" class="hs-accordion-active:rotate-180 transition-transform duration-300 w-5 h-5 text-accent-600 dark:text-accent-400"></i>
+            </button>
+            <div id="hs-collapse-macro-2" class="hs-accordion-content hidden w-full overflow-hidden transition-[height] duration-300" aria-labelledby="hs-macro-2">
+              <div class="p-6 pt-0 space-y-4">
+                <p class="text-gray-700 dark:text-gray-300" data-ref="https://www.linkedin.com/posts/adamlwalker_omdia-semiconductor-market-surpasses-830bn-activity-7440356759472369664-WTtv|2">
+                  Продолжающиеся инвестиции от гипермасштабных провайдеров поддерживают рост рынка ИИ-чипов, составляющих около 30% от общей выручки от полупроводников в 2026 году. Это создает устойчивый спрос на южнокорейские полупроводниковые компании.
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Conclusion Section -->
+    <section id="conclusion" class="py-20 bg-accent-50/50 dark:bg-gray-800" data-aos="fade-up">
+      <div class="max-w-5xl mx-auto px-6">
+        <h2 class="text-3xl font-bold mb-8 text-accent-700 dark:text-accent-300 text-center">
+          Заключение
+        </h2>
+
+        <div class="space-y-6">
+          <p class="text-lg text-gray-700 dark:text-gray-300">
+            Рост южнокорейского фондового индекса KOSPI и связанного с ним американского ETF KORU обусловлен комплексом макроэкономических факторов, включая сильную экспортную динамику, особенно в секторе полупроводников, благоприятную монетарную политику и глобальный спрос на технологии искусственного интеллекта.
+          </p>
+
+          <div class="grid md:grid-cols-3 gap-6 my-8">
+            <div class="card-interactive p-6 bg-white/90 backdrop-blur-sm dark:bg-gray-900 rounded-xl shadow-md">
+              <div class="text-center">
+                <div class="text-3xl font-bold text-primary-600 dark:text-primary-400 mb-2">70%</div>
+                <p class="text-sm text-gray-600 dark:text-gray-400">рост KOSPI за год</p>
+              </div>
+            </div>
+
+            <div class="card-interactive p-6 bg-white/90 backdrop-blur-sm dark:bg-gray-900 rounded-xl shadow-md">
+              <div class="text-center">
+                <div class="text-3xl font-bold text-accent-600 dark:text-accent-400 mb-2">$709.69 млрд</div>
+                <p class="text-sm text-gray-600 dark:text-gray-400">экспорт в 2025</p>
+              </div>
+            </div>
+
+            <div class="card-interactive p-6 bg-white/90 backdrop-blur-sm dark:bg-gray-900 rounded-xl shadow-md">
+              <div class="text-center">
+                <div class="text-3xl font-bold text-primary-600 dark:text-primary-400 mb-2">64%</div>
+                <p class="text-sm text-gray-600 dark:text-gray-400">ожидаемый рост памяти</p>
+              </div>
+            </div>
+          </div>
+
+          <p class="text-gray-700 dark:text-gray-300">
+            Южная Корея демонстрирует впечатляющую экономическую устойчивость, установив рекорды по объему экспорта в $709.69 млрд в 2025 году с торговым профицитом $78.02 млрд. Полупроводниковый сектор стал ключевым драйвером роста, увеличившись на 22.2% до $173.39 млрд, что соответствует глобальному суперциклу памяти.
+          </p>
+
+          <p class="text-gray-700 dark:text-gray-300">
+            Монетарная политика оставалась стабильной с процентной ставкой 2.50% в 2025 году, а курс USD/KRW консолидировался около 1,510 уровня, поддерживая конкурентоспособность экспорта. Прогнозируемый рост ВВП 4.3% в 2026 году и закрытие отрицательного разрыва выпуска указывают на улучшение общего состояния экономики.
+          </p>
+
+          <div class="pl-4 pr-3 py-3 border-l-4 border-primary-500 bg-primary-50/40 dark:bg-primary-900/30 rounded-r-lg">
+            <p class="text-sm font-medium text-primary-900 dark:text-primary-100 leading-relaxed">
+              <i data-lucide="trending-up" class="inline-block w-4 h-4 mr-1.5 -mt-0.5"></i>
+              Южная Корея занимает лидирующую позицию среди развивающихся рынков благодаря сильному сочетанию технологического лидерства, экспортной конкурентоспособности и благоприятной макроэкономической среды, что делает KOSPI и ETF KORU привлекательными инвестиционными инструментами.
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- Footer -->
+  <footer class="bg-primary-900 dark:bg-gray-950 text-white py-12">
+    <div class="max-w-6xl mx-auto px-6">
+      <div class="grid md:grid-cols-3 gap-8">
+        <div>
+          <h3 class="text-lg font-semibold mb-4 text-primary-300">О Исследовании</h3>
+          <p class="text-sm text-gray-300">
+            Комплексный анализ макроэкономических факторов, обусловивших рост южнокорейского фондового рынка KOSPI и ETF KORU.
+          </p>
+        </div>
+        <div>
+          <h3 class="text-lg font-semibold mb-4 text-primary-300">Ключевые Темы</h3>
+          <ul class="space-y-2 text-sm text-gray-300">
+            <li>• Экспортные достижения</li>
+            <li>• Полупроводниковый суперцикл</li>
+            <li>• Монетарная политика</li>
+            <li>• Макроэкономический прогноз</li>
+          </ul>
+        </div>
+        <div>
+          <h3 class="text-lg font-semibold mb-4 text-primary-300">Информация</h3>
+          <p class="text-sm text-gray-300">
+            Все данные основаны на официальных источниках и аналитических отчетах. Исследование охватывает период с 2025 по 2026 год.
+          </p>
+        </div>
+      </div>
+      <div class="mt-8 pt-8 border-t border-primary-800 text-center text-sm text-gray-400">
+        <p>&copy; 2026 Макроэкономический Анализ KOSPI и KORU. Все права защищены.</p>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Initialize Libraries -->
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      // Initialize Lucide Icons
+      lucide.createIcons();
+
+      // Initialize AOS
+      AOS.init({
+        duration: 800,
+        once: true,
+        offset: 100
+      });
+
+      // Progress bar functionality
+      window.addEventListener('scroll', function() {
+        const winScroll = document.body.scrollTop || document.documentElement.scrollTop;
+        const height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+        const scrolled = (winScroll / height) * 100;
+        document.getElementById('progressBar').style.width = scrolled + '%';
+      });
+
+      // Initialize Preline components
+      setTimeout(() => {
+        HSStaticMethods.autoInit();
+      }, 100);
+
+      // Initialize citation system
+      setTimeout(() => {
+        initCitationSystem();
+      }, 200);
+    });
+  </script>
+</body>
+</html>
+
